@@ -7,10 +7,11 @@ def init_routes(app):
     @app.route('/mystat/json')
     def mystatJson():
         mystat = pd.read_csv(app.root_path + '/data/mystat.csv', index_col="Date")
+        print(mystat)
 
         if request.args.get('addSleepDuration', default=False, type=bool):
-            mystat["Got up at"] = pd.to_datetime(mystat.index.to_series().astype(str) + " " + mystat["Got up at"])
-            mystat["To bed at"] = pd.to_datetime(mystat.index.to_series().astype(str) + " " + mystat["To bed at"])
+            mystat["Got up at"] = pd.to_datetime(mystat.index.to_series().astype(str) + " " + mystat["Got up at"], dayfirst=True)
+            mystat["To bed at"] = pd.to_datetime(mystat.index.to_series().astype(str) + " " + mystat["To bed at"], dayfirst=True)
             mystat.loc[mystat["To bed at"] < mystat["Got up at"], "To bed at"] += pd.Timedelta(days=1)
             sDurs =  mystat.iloc[1:]["Got up at"].reset_index(drop=True) - mystat.iloc[:-1]["To bed at"].reset_index(drop=True)
             sDurs.index = mystat.iloc[1:].index
