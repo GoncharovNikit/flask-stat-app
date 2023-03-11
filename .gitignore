@@ -1,2 +1,4 @@
 api/data/mystat.csv
+api/.env
 *__pycache__
+logs
